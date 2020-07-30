@@ -39,6 +39,7 @@ body {
 #legend rect {
   stroke: white;
   fill: url(#gradient);
+  opacity: .67;
 }
 #label {
   fill: white;
