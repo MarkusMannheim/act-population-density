@@ -1,12 +1,19 @@
 @font-face {
-  font-family: "ABCSans Black";
+  font-family: "ABCSans Regular";
   font-style: normal;
   font-weight: normal;
-  src: local("ABCSans Black"), url("./abcsans-black.woff") format("woff");
+  src: local("ABCSans Regular"), url("./abcsans-regular.woff") format("woff");
 }
+@font-face {
+  font-family: "ABCSans Light";
+  font-style: normal;
+  font-weight: normal;
+  src: local("ABCSans Light"), url("./abcsans-light.woff") format("woff");
+}
+
 :root {
   font-size: 1em;
-  font-family: "ABCSans Black", "Arial Black", sans-serif;
+  font-family: "ABCSans Regular", "Arial", sans-serif;
 }
 body {
   margin: 0;
@@ -17,4 +24,34 @@ body {
   top: 0;
   bottom: 0;
   width: 100%;
+}
+#legend {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  border-radius: 5px;
+  width: 70px;
+  height: 50%;
+  background-color: rgba(28, 28, 28, .5);
+  opacity: 0;
+  pointer-events: none;
+}
+#legend rect {
+  stroke: white;
+  fill: url(#gradient);
+}
+#label {
+  fill: white;
+  text-anchor: end;
+  font-size: .75rem;
+  font-weight: bold;
+}
+.tick text {
+  fill: white;
+}
+.tick line {
+  stroke: white;
+}
+path.domain {
+  stroke: none;
 }
