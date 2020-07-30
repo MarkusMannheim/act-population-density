@@ -41,7 +41,7 @@
       <defs>
         <linearGradient id="gradient" x1="0%" x2="0%" y1="0%" y2="100%"></linearGradient>
       </defs>
-      <text id="label" x=60 y=20>ppl/sqkm</text>
+      <text id="label" x=60 y=20>ppl/ha</text>
       <rect x=30 y=30 width=30></rect>
       <g id="axisGroup" transform="translate(30, 30)"></g>
     </svg>
@@ -99,7 +99,7 @@
             .exponent(1e-1);
           axis = d3.axisLeft(x)
             .tickValues([100, 1000, 5000, 20000, 50000])
-            .tickFormat(function(d) { return d == 100 ? d : d3.format(".0f")(d / 1000) + "k"; });
+            .tickFormat(function(d) { return d / 100; });
           // resize and correct
           window.addEventListener("resize", resize);
           resize();
