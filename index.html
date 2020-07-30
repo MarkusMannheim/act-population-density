@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-155991615-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-155991615-1');
+    </script>
+    <!-- my stuff -->
+    <meta charset="utf-8">
+    <title>ACT population density</title>
+    <meta name="author" content="Markus Mannheim">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Initial scripts -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js"></script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css" rel="stylesheet">
+    <link href="./resources/style.css" rel="stylesheet">
+    <link href="./resources/abcLogo64.png" rel="icon">
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+    	mapboxgl.accessToken = "pk.eyJ1IjoibmV3cy1vbjFpbmUiLCJhIjoiR3FlZFZlVSJ9._30EFE9XYhQitqf4gzRG-g";
+      var map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/dark-v10",
+        center: [149.126944, -35.313056],
+        attributionControl: false,
+        zoom: 11.5,
+        pitch: 60,
+        bearing: -30,
+        antialias: true
+      });
+      map.on("load", function() {
+        map.addSource("populationDensity", {
+            // GeoJSON Data source used in vector tiles, documented at
+            // https://gist.github.com/ryanbaumann/a7d970386ce59d11c16278b90dde094d
+            type: "geojson",
+            // "data": "https://docs.mapbox.com/mapbox-gl-js/assets/indoor-3d-map.geojson"
+            data: "./resources/population.geojson?key=" + Math.floor(Math.random() * 9000 + 1000)
+          })
+          .addControl(new mapboxgl.AttributionControl({
+            compact: true,
+            customAttribution: "Census 2016"
+          }))
+          .addControl(new mapboxgl.NavigationControl())
+          .addLayer({
+            'id': 'room-extrusion',
+            'type': 'fill-extrusion',
+            source: "populationDensity",
+            'paint': {
+              // See the Mapbox Style Specification for details on data expressions.
+              // https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions
+              "fill-extrusion-color": ["get", "colour"],
+              'fill-extrusion-height': ['get', 'density'],
+              'fill-extrusion-opacity': .5
+            }
+          });
+      });
+    </script>
+  </body>
+</html>
