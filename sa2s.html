@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-155991615-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-155991615-1');
+    </script>
+    <!-- my stuff -->
+    <meta charset="utf-8">
+    <title>ACT population density</title>
+    <meta name="description" content="Where Canberrans will live in 2022, by suburb.">
+    <meta name="keywords" content="canberra, act, population, density, census, growth, development, dataviz, map">
+    <meta name="author" content="Markus Mannheim">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Initial scripts -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js"></script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css" rel="stylesheet">
+    <link href="./resources/style.css" rel="stylesheet">
+    <!-- page data for scrapers -->
+    <meta property="og:title" content="ACT population density">
+    <meta property="og:description" content="Where Canberrans will live in 2022, by suburb.">
+    <meta name="image" property="og:image" content="https://markusmannheim.github.io/act-population-density/resources/sa2Density.jpg">
+    <meta property="og:url" content="https://markusmannheim.github.io/act-population-density/sa2s.html">
+    <meta property="og:type" content="website">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:site" content="@MarkusMannheim">
+    <meta property="twitter:creator" content="@MarkusMannheim">
+    <link href="./resources/abcLogo64.png" rel="icon">
+  </head>
+  <body>
+    <!-- initial HTML layout -->
+    <div id="map"></div>
+    <svg id="legend">
+      <defs>
+        <linearGradient id="gradient" x1="0%" x2="0%" y1="0%" y2="100%"></linearGradient>
+      </defs>
+      <text id="label" x=60 y=20>ppl/ha</text>
+      <rect x=30 y=30 width=30></rect>
+      <g id="axisGroup" transform="translate(30, 30)"></g>
+    </svg>
+    <script>
+      // load data
+      d3.json("./resources/actSa2.topojson", function(error, data) {
+        if (error) throw error;
+        geoData = topojson.feature(data, data.objects.areas);
+        // establish MapBox elements
+        mapboxgl.accessToken = "pk.eyJ1IjoibmV3cy1vbjFpbmUiLCJhIjoiR3FlZFZlVSJ9._30EFE9XYhQitqf4gzRG-g";
+        map = new mapboxgl.Map({
+          container: "map",
+          style: "mapbox://styles/mapbox/dark-v10",
+          center: [149.126944, -35.313056],
+          maxBounds: [[148.836944, -35.613056], [149.426944, -35.063056]],
+          zoom: 11.5,
+          attributionControl: false,
+          pitch: 60,
+          bearing: -30,
+          antialias: true
+        });
+        map.on("load", function() {
+          // map.addControl(new mapboxgl.NavigationControl()) // add navigation tools
+            map.addSource("sa2Density", { // load in sa1 shapes and heights
+              type: "geojson",
+              data: geoData
+            })
+            .addLayer({
+              "id": "sa2-extrusion",
+              "type": "fill-extrusion",
+              source: "sa2Density",
+              "paint": {
+                "fill-extrusion-color": ["get", "fill"],
+                "fill-extrusion-height": ["get", "height"],
+                "fill-extrusion-opacity": .67
+              }
+            });
+          // page elements
+          legend = d3.select("#legend");
+          legend.transition()
+            .duration(2000)
+            .style("opacity", 1);
+          // colour legend bar
+          d3.select("#gradient")
+            .selectAll("stop")
+              .data(d3.range(11))
+            .enter().append("stop")
+              .attr("offset", function(d) { return d * 10 + "%"; })
+              .attr("style", function(d) { return "stop-color: " + d3.interpolateSpectral(d / 10) + "; stop-opacity: 1;"; });
+          label = d3.select("#label");
+          axisGroup = d3.select("#axisGroup");
+          // add legend axis
+          x = d3.scalePow()
+            .domain([54.641625500978655, 5403.592144803969])
+            .exponent(1/4);
+          axis = d3.axisLeft(x)
+            .tickValues([100, 1000, 2500, 5000])
+            // convert from sqkm to ha
+            .tickFormat(function(d) { return d / 100; });
+          // resize and correct
+          window.addEventListener("resize", resize);
+          resize();
+        });
+      });
+      function resize() {
+        dimensions = document.getElementById("map").getBoundingClientRect();
+        width = dimensions.width;
+        height = dimensions.height;
+        barHeight = height * .5 - 40;
+        legend.select("rect")
+          .attr("height", barHeight);
+        x.range([barHeight, 0]);
+        axisGroup.call(axis);
+      }
+    </script>
+  </body>
+</html>
