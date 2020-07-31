@@ -13,7 +13,7 @@
     <meta charset="utf-8">
     <title>ACT population density</title>
     <meta name="description" content="Where Canberrans lived in 2016, by statistical area level 1.">
-    <meta name="keywords" content="canberra, act, air, quality, aqi, pollution, pm25, smoke, bushfires">
+    <meta name="keywords" content="canberra, act, population, density, census, growth, development, dataviz, map">
     <meta name="author" content="Markus Mannheim">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Initial scripts -->
@@ -64,8 +64,8 @@
           antialias: true
         });
         map.on("load", function() {
-          // map.addControl(new mapboxgl.NavigationControl()) // add navigation tools
-            map.addSource("sa1Density", { // load in sa1 shapes and heights
+          map.addControl(new mapboxgl.NavigationControl()) // add navigation tools
+            .addSource("sa1Density", { // load in sa1 shapes and heights
               type: "geojson",
               data: geoData
             })
@@ -99,6 +99,7 @@
             .exponent(1e-1);
           axis = d3.axisLeft(x)
             .tickValues([100, 1000, 5000, 20000, 50000])
+            // convert from sqkm to ha
             .tickFormat(function(d) { return d / 100; });
           // resize and correct
           window.addEventListener("resize", resize);

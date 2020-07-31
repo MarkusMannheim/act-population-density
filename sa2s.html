@@ -64,8 +64,8 @@
           antialias: true
         });
         map.on("load", function() {
-          // map.addControl(new mapboxgl.NavigationControl()) // add navigation tools
-            map.addSource("sa2Density", { // load in sa1 shapes and heights
+          map.addControl(new mapboxgl.NavigationControl()) // add navigation tools
+            .addSource("sa2Density", { // load in sa1 shapes and heights
               type: "geojson",
               data: geoData
             })
